@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: 'pages'
+  group: "pages"
   cancel-in-progress: true
 
 jobs:
@@ -22,40 +22,40 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
-      
+          dotnet-version: "10.0.x"
+
       - name: Build Blazor App
         run: |
           cd SocOps
           dotnet publish -c Release -o ../publish
-      
+
       - name: Prepare deployment
         run: |
           # Create _site directory
           mkdir -p ./_site/app
-          
+
           # Copy docs (workshop walkthrough) to root
           cp -r docs/* ./_site/
-          
+
           # Copy Blazor app output to /app subdirectory
           cp -r publish/wwwroot/* ./_site/app/
-          
+
           # Fix base href for GitHub Pages subdirectory
-          sed -i 's|<base href="/" />|<base href="/agent-lab-dotnet/app/" />|g' ./_site/app/index.html
-          
+          sed -i 's|<base href="/" />|<base href="/agent-dotnet-lab/app/" />|g' ./_site/app/index.html
+
           # Prevent Jekyll processing
           touch ./_site/.nojekyll
-      
+
       - uses: actions/configure-pages@v4
-      
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
-      
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
