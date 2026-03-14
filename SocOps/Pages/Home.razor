@@ -1,39 +1,25 @@
 ﻿@page "/"
-@using SocOps.Models
-@using SocOps.Services
 @inject BingoGameService GameService
-@implements IDisposable
 
-<PageTitle>Soc Ops - Social Bingo</PageTitle>
+<PageTitle>Home</PageTitle>
 
 @if (GameService.CurrentGameState == GameState.Start)
 {
-    <StartScreen OnStart="@GameService.StartGame" />
+    <div class="start-screen">
+        <button class="btn-start" @onclick="GameService.StartGame">Start Game</button>
+    </div>
 }
 else
 {
-    <GameScreen
-        Board="@GameService.Board"
-        WinningSquareIds="@GameService.WinningSquareIds"
-        HasBingo="@(GameService.CurrentGameState == GameState.Bingo)"
-        OnSquareClick="@GameService.HandleSquareClick"
-        OnReset="@GameService.ResetGame" />
-
-    @if (GameService.ShowBingoModal)
-    {
-        <BingoModal OnDismiss="@GameService.DismissModal" />
-    }
+    <div class="game-screen">
+        <p>Game in progress...</p>
+        <button class="btn-reset" @onclick="GameService.ResetGame">Reset Game</button>
+    </div>
 }
 
 @code {
     protected override async Task OnInitializedAsync()
     {
         await GameService.InitializeAsync();
-        GameService.OnStateChanged += StateHasChanged;
-    }
-
-    public void Dispose()
-    {
-        GameService.OnStateChanged -= StateHasChanged;
     }
 }
